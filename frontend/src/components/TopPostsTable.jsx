@@ -13,67 +13,108 @@ export default function TopPostsTable() {
       .catch(err => console.error(err));
   }, []);
 
+  if (posts.length === 0) {
+    return (
+      <div className="h-[240px] flex items-center justify-center text-slate-400 animate-pulse">
+        Loading top viral posts...
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white p-5 rounded shadow">
+    <div className="overflow-hidden rounded-xl border border-slate-200">
 
-      <h2 className="font-semibold mb-3">Top Viral Posts</h2>
+      <div className="overflow-x-auto">
 
-      {posts.length === 0 ? (
-        <p className="text-gray-400">No data available</p>
-      ) : (
-        <div className="overflow-x-auto">
+        <table className="w-full text-sm">
 
-          <table className="w-full text-sm">
+          {/* Header */}
+          <thead className="bg-slate-100 sticky top-0 z-10">
+            <tr className="text-slate-600 text-xs uppercase tracking-wide">
 
-            <thead className="border-b">
-              <tr>
-                <th className="text-left py-2">Title</th>
-                <th>Score</th>
-                <th>Comments</th>
-                <th>Subreddit</th>
-              </tr>
-            </thead>
+              <th className="py-3 px-3 text-left">
+                #
+              </th>
 
-            <tbody>
+              <th className="py-3 px-3 text-left">
+                Post Title
+              </th>
 
-              {posts.map((post, index) => (
-                <tr
-                  key={index}
-                  className="border-b hover:bg-gray-50"
-                >
+              <th className="py-3 px-3 text-center">
+                Score
+              </th>
 
-                  <td className="py-2 pr-2">
-                    <a
-                      href={post.permalink}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-blue-600 hover:underline"
-                    >
-                      {post.title.substring(0, 60)}...
-                    </a>
-                  </td>
+              <th className="py-3 px-3 text-center">
+                Comments
+              </th>
 
-                  <td className="text-center font-medium">
+              <th className="py-3 px-3 text-center">
+                Subreddit
+              </th>
+
+            </tr>
+          </thead>
+
+          {/* Body */}
+          <tbody>
+
+            {posts.map((post, index) => (
+              <tr
+                key={index}
+                className="border-t hover:bg-blue-50 transition"
+              >
+
+                {/* Rank */}
+                <td className="py-3 px-3 font-semibold text-slate-500">
+                  {index + 1}
+                </td>
+
+                {/* Title */}
+                <td className="py-3 px-3">
+
+                  <a
+                    href={post.permalink}
+                    target="_blank"
+                    rel="noreferrer"
+                    title={post.title}
+                    className="text-blue-600 hover:underline font-medium"
+                  >
+                    {post.title.length > 70
+                      ? post.title.substring(0, 70) + "..."
+                      : post.title}
+                  </a>
+
+                </td>
+
+                {/* Score */}
+                <td className="py-3 px-3 text-center">
+                  <span className="px-2 py-1 rounded-full bg-orange-100 text-orange-600 font-semibold text-xs">
                     🔥 {post.score}
-                  </td>
+                  </span>
+                </td>
 
-                  <td className="text-center">
+                {/* Comments */}
+                <td className="py-3 px-3 text-center">
+                  <span className="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-medium">
                     💬 {post.num_comments}
-                  </td>
+                  </span>
+                </td>
 
-                  <td className="text-center text-gray-500">
+                {/* Subreddit */}
+                <td className="py-3 px-3 text-center">
+                  <span className="px-2 py-1 rounded-full bg-indigo-100 text-indigo-600 text-xs font-semibold">
                     r/{post.subreddit}
-                  </td>
+                  </span>
+                </td>
 
-                </tr>
-              ))}
+              </tr>
+            ))}
 
-            </tbody>
+          </tbody>
 
-          </table>
+        </table>
 
-        </div>
-      )}
+      </div>
 
     </div>
   );
