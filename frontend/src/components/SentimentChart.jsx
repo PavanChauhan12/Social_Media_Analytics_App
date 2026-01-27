@@ -11,13 +11,17 @@ import {
 
 const COLORS = ["#22c55e", "#ef4444", "#64748b"];
 
-export default function SentimentChart() {
+export default function SentimentChart({ subreddit }) {
 
   const [chartData, setChartData] = useState([]);
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    api.get("/sentiment/stats")
+    const url = subreddit === "all" || !subreddit
+      ? "/sentiment/stats"
+      : `/sentiment/stats?subreddit=${subreddit}`;
+
+    api.get(url)
       .then(res => {
 
         const dist = res.data.sentiment_distribution || {};
@@ -38,7 +42,7 @@ export default function SentimentChart() {
       })
       .catch(err => console.error(err));
 
-  }, []);
+  }, [subreddit]);
 
   if (!chartData.length) {
     return (

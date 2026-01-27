@@ -5,7 +5,7 @@ const controller = require("../controllers/sentimentController");
 
 router.post("/analyze", controller.analyzePosts);
 router.post("/reanalyze", controller.reanalyzePosts);
-router.get("/stats", controller.getStats);
+router.get("/stats", controller.getSentimentStats);
 router.get("/timeline", controller.getSentimentTimeline);
 
 module.exports = router;

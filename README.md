@@ -10,38 +10,30 @@ A full-stack web application for analyzing Reddit data, including sentiment anal
 - **KPIs Dashboard:** Visualize metrics and insights
 
 ## Tech Stack
-- **Frontend:** React, Vite, Tailwind CSS
-- **Backend:** Node.js, Express
-- **Database:** (Add your DB, e.g., MongoDB)
+- **Frontend:** React, Vite, Tailwind CSS, Axios, ApexCharts, Recharts
+- **Backend:** Node.js, Express, MongoDB
+- **Libraries:** Natural (NLP), Vader Sentiment, Stopword
 
-## Folder Structure
+## Prerequisites
+- Node.js (v16+ recommended)
+- MongoDB (local or Atlas)
+
+## Environment Setup
+Create a `.env` file in the root directory with:
 ```
-Social_Media_Analytics/
-├── backend/
-│   ├── app.js
-│   ├── server.js
-│   ├── config/
-│   ├── controllers/
-│   ├── middlewares/
-│   ├── models/
-│   ├── routes/
-│   ├── services/
-│   └── utils/
-├── frontend/
-│   ├── src/
-│   ├── public/
-│   ├── index.html
-│   ├── vite.config.js
-│   └── ...
-├── package.json
-└── README.md
+MONGO_URI=your_mongodb_connection_string
+MONGO_DB_NAME=Social_Media_Analytics
+PORT=5000
+NODE_ENV=development
+LOG_LEVEL=info
+```
+
+For the frontend, create `.env` in `frontend/` with:
+```
+VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
 ## Getting Started
-
-### Prerequisites
-- Node.js (v16+ recommended)
-- npm or yarn
 
 ### Backend Setup
 1. Navigate to backend folder:
@@ -52,7 +44,7 @@ Social_Media_Analytics/
    ```bash
    npm install
    ```
-3. Configure your database in `config/db.js`.
+3. Configure your database in `config/db.js` (uses .env).
 4. Start the backend server:
    ```bash
    npm run dev
@@ -72,8 +64,17 @@ Social_Media_Analytics/
    npm run dev
    ```
 
-### Environment Variables
-- Add any required environment variables in `.env` files for both backend and frontend as needed.
+## Usage
+- Access the dashboard at `http://localhost:3000` (frontend dev server).
+- Use the Ingest Panel to collect Reddit data.
+- View analytics filtered by subreddit.
+
+## Features
+- Data Ingestion from Reddit API
+- Sentiment Analysis using Vader
+- Topic Modeling with LDA
+- Interactive Charts and KPIs
+- Responsive UI with Tailwind CSS
 
 ## Usage
 - Access the dashboard at `http://localhost:3000` (or the port specified in frontend).

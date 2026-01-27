@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
 import api from "../api/api";
 
-export default function TopPostsTable() {
+export default function TopPostsTable({ subreddit }) {
 
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    api.get("/topics/trending-titles?top_n=5")
+    const url = subreddit === "all" || !subreddit
+      ? "/topics/trending-titles?top_n=5"
+      : `/topics/trending-titles?top_n=5&subreddit=${subreddit}`;
+
+    api.get(url)
       .then(res => {
         setPosts(res.data.posts || []);
       })
       .catch(err => console.error(err));
-  }, []);
+  }, [subreddit]);
 
   if (posts.length === 0) {
     return (

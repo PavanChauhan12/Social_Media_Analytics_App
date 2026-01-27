@@ -35,20 +35,80 @@ exports.reanalyzePosts = async (req, res) => {
   }
 };
 
-exports.getStats = async (req, res) => {
-  const stats = await sentimentService.getSentimentStats();
-  res.json(stats);
+exports.getSentimentStats = async (req, res) => {
+
+  const { subreddit } = req.query;
+
+  const filter = {};
+
+  if (subreddit && subreddit !== "all") {
+    filter.subreddit = subreddit;
+  }
+
+  try {
+
+    const total_posts = await RedditData.countDocuments(filter);
+
+    const analyzed_posts = await RedditData.countDocuments({
+      ...filter,
+      sentiment_score: { $exists: true }
+    });
+
+    const distribution = await RedditData.aggregate([
+      { $match: { ...filter, sentiment_label: { $exists: true } } },
+      {
+        $group: {
+          _id: "$sentiment_label",
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const sentiment_distribution = {};
+
+    distribution.forEach(item => {
+      sentiment_distribution[item._id] = item.count;
+    });
+
+    const avg = await RedditData.aggregate([
+      { $match: { ...filter, sentiment_score: { $exists: true } } },
+      {
+        $group: {
+          _id: null,
+          avg: { $avg: "$sentiment_score" }
+        }
+      }
+    ]);
+
+    res.json({
+      total_posts,
+      analyzed_posts,
+      sentiment_distribution,
+      avg_sentiment_score: avg[0]?.avg || 0
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
+
 
 exports.getSentimentTimeline = async (req, res) => {
   try {
+    const { subreddit } = req.query;
+
+    const matchFilter = {
+      sentiment_score: { $exists: true },
+      data_type: "post"
+    };
+
+    if (subreddit && subreddit !== "all") {
+      matchFilter.subreddit = subreddit;
+    }
 
     const data = await RedditData.aggregate([
       {
-        $match: {
-          sentiment_score: { $exists: true },
-          data_type: "post"
-        }
+        $match: matchFilter
       },
       {
         $group: {

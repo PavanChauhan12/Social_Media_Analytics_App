@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
 import api from "../api/api";
 
-export default function TrendingTopics() {
+export default function TrendingTopics({ subreddit }) {
 
   const [topics, setTopics] = useState([]);
 
   useEffect(() => {
-    api.get("/topics/trending-topics?top_n=10")
+    const url = subreddit === "all" || !subreddit
+      ? "/topics/trending-topics?top_n=10"
+      : `/topics/trending-topics?top_n=10&subreddit=${subreddit}`;
+
+    api.get(url)
       .then(res => {
         setTopics(res.data.topics || []);
       })
       .catch(err => console.error(err));
-  }, []);
+  }, [subreddit]);
 
   if (topics.length === 0) {
     return (

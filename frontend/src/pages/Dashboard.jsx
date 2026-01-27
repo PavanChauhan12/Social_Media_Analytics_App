@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// import { fetchTimeline } from "../api/sentimentApi";
 import KPICards from "../components/KPICards";
 import SentimentChart from "../components/SentimentChart";
 import TrendingTopics from "../components/TrendingTopics";
@@ -7,52 +6,32 @@ import TopPostsTable from "../components/TopPostsTable";
 import SentimentTimeline from "../components/charts/SentimentTimeline";
 import SubredditFilter from "../components/SubredditFilter";
 import IngestPanel from "../components/IngestPanel";
-import axios from "axios";
-// import { set } from "../../../backend/app";
+import api from "../api/api";
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [timelineData, setTimelineData] = useState([]);
   const [subreddit, setSubreddit] = useState("all");
 
-//   const fetchTimeline = async () => {
-//   try {
-//     const res = await axios.get("http://localhost:5000/api/sentiment/timeline");
+  const fetchTimeline = async () => {
+    try {
+      setLoading(true);
+      const url = subreddit === "all"
+        ? "/sentiment/timeline"
+        : `/sentiment/timeline?subreddit=${subreddit}`;
 
-//     console.log("TIMELINE API RESPONSE:", JSON.stringify(res));
+      const res = await api.get(url);
 
-//     if (res.data.success) {
-//       setTimelineData(res.data.timeline);
-//     }
-//   } catch (error) {
-//     console.error("Timeline fetch error:", error);
-//   }
-// };
+      if (res.data.success) {
+        setTimelineData(res.data.timeline);
+      }
 
-const fetchTimeline = async () => {
-  try {
-    setLoading(true);
-    const url =
-      subreddit === "all"
-        ? "http://localhost:5000/api/sentiment/timeline"
-        : `http://localhost:5000/api/sentiment/timeline?subreddit=${subreddit}`;
-
-    const res = await axios.get(url);
-
-    if (res.data.success) {
-      setTimelineData(res.data.timeline);
+      setLoading(false);
+    } catch (error) {
+      console.error("Timeline fetch error:", error);
+      setLoading(false);
     }
-
-    setLoading(false);
-  } catch (error) {
-    console.error("Timeline fetch error:", error);
-    setLoading(false);
-  }
-};
-
-console.log("TIMELINE DATA IN DASHBOARD:", timelineData);
-console.log("ACTIVE SUBREDDIT:", subreddit);
-
+  };
 
   useEffect(() => {
     fetchTimeline();
@@ -103,7 +82,7 @@ console.log("ACTIVE SUBREDDIT:", subreddit);
         <h3 className="font-semibold text-lg mb-4">
           📊 Sentiment Distribution
         </h3>
-        <SentimentChart />
+        <SentimentChart subreddit={subreddit} />
       </div>
 
       {/* Sentiment Timeline */}
@@ -129,7 +108,7 @@ console.log("ACTIVE SUBREDDIT:", subreddit);
         🔥 Trending Topics
       </h3>
 
-      <TrendingTopics />
+      <TrendingTopics subreddit={subreddit} />
     </div>
 
     {/* Top Posts */}
@@ -138,7 +117,7 @@ console.log("ACTIVE SUBREDDIT:", subreddit);
         🚀 Top Viral Posts
       </h3>
 
-      <TopPostsTable />
+      <TopPostsTable subreddit={subreddit} />
     </div>
 
   </div>

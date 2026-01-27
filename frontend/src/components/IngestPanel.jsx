@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api/api";
 
 export default function IngestPanel({ onSuccess }) {
 
@@ -18,8 +18,8 @@ export default function IngestPanel({ onSuccess }) {
       setLoading(true);
       setMessage(null);
 
-      const res = await axios.post(
-        "http://localhost:5000/api/reddit/ingest",
+      const res = await api.post(
+        "/reddit/ingest",
         {
           subreddit,
           limit
